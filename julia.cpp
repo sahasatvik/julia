@@ -135,81 +135,79 @@ int main(int argc, const char *argv[]) {
         SDL_Event event;
         bool quit = false;
 
-        while(!quit) {
-                while(SDL_PollEvent(&event)) {
-                        if(event.type == SDL_QUIT) {
-                                quit = true;
-                        } else if (event.type == SDL_MOUSEBUTTONDOWN) {
-                                int i, j;
-                                SDL_GetMouseState(&i, &j);
-                                double x_min = centre.first - dx / 2;
-                                double y_min = centre.second - dx * HEIGHT / (WIDTH * 2);
-                                double x = x_min + dx * i / WIDTH;
-                                double y = y_min + dx * j / WIDTH;
+        while(!quit && SDL_WaitEvent(&event)) {
+                if(event.type == SDL_QUIT) {
+                        quit = true;
+                } else if (event.type == SDL_MOUSEBUTTONDOWN) {
+                        int i, j;
+                        SDL_GetMouseState(&i, &j);
+                        double x_min = centre.first - dx / 2;
+                        double y_min = centre.second - dx * HEIGHT / (WIDTH * 2);
+                        double x = x_min + dx * i / WIDTH;
+                        double y = y_min + dx * j / WIDTH;
 
-                                switch(event.button.button) {
-                                        case SDL_BUTTON_RIGHT:
-                                                seed = {x, y};
-                                                break;
-                                        case SDL_BUTTON_LEFT:
-                                                centre = {x, y};
-                                                break;
-                                }
-
-                                printf("Seed %.6f + %.6fi\n", seed.first, seed.second);
-                                render(buffer, centre, dx, seed, f, maxiter, samples);
-                                SDL_UpdateTexture(texture, NULL, buffer, WIDTH * sizeof(uint32_t));
-                                SDL_RenderCopy(renderer, texture, NULL, &texture_rect);
-                                SDL_RenderPresent(renderer);
-                        } else if (event.type == SDL_KEYDOWN) {
-                                switch(event.key.keysym.scancode) {
-                                        case SDL_SCANCODE_Q:
-                                                quit = true;
-                                                break;
-                                        case SDL_SCANCODE_0:
-                                                centre = {0, 0};
-                                                dx = 4;
-                                                break;
-                                        case SDL_SCANCODE_MINUS:
-                                                dx /= zoom;
-                                                break;
-                                        case SDL_SCANCODE_EQUALS:
-                                                dx *= zoom;
-                                                break;
-                                        case SDL_SCANCODE_LEFT:
-                                                centre.first -= dx * move;
-                                                break;
-                                        case SDL_SCANCODE_RIGHT:
-                                                centre.first += dx * move;
-                                                break;
-                                        case SDL_SCANCODE_UP:
-                                                centre.second -= dx * move;
-                                                break;
-                                        case SDL_SCANCODE_DOWN:
-                                                centre.second += dx * move;
-                                                break;
-                                                break;
-                                        case SDL_SCANCODE_COMMA:
-                                                maxiter /= 2;
-                                                break;
-                                        case SDL_SCANCODE_PERIOD:
-                                                maxiter *= 2;
-                                                break;
-                                        case SDL_SCANCODE_LEFTBRACKET:
-                                                samples /= 2;
-                                                break;
-                                        case SDL_SCANCODE_RIGHTBRACKET:
-                                                samples *= 2;
-                                                break;
-                                }
-                                maxiter = (maxiter == 0)? 1 : maxiter;
-                                samples = (samples == 0)? 1 : samples;
-                                printf("Maxiter %d, Samples %d\n", maxiter, samples);
-                                render(buffer, centre, dx, seed, f, maxiter, samples);
-                                SDL_UpdateTexture(texture, NULL, buffer, WIDTH * sizeof(uint32_t));
-                                SDL_RenderCopy(renderer, texture, NULL, &texture_rect);
-                                SDL_RenderPresent(renderer);
+                        switch(event.button.button) {
+                                case SDL_BUTTON_RIGHT:
+                                        seed = {x, y};
+                                        break;
+                                case SDL_BUTTON_LEFT:
+                                        centre = {x, y};
+                                        break;
                         }
+
+                        printf("Seed %.6f + %.6fi\n", seed.first, seed.second);
+                        render(buffer, centre, dx, seed, f, maxiter, samples);
+                        SDL_UpdateTexture(texture, NULL, buffer, WIDTH * sizeof(uint32_t));
+                        SDL_RenderCopy(renderer, texture, NULL, &texture_rect);
+                        SDL_RenderPresent(renderer);
+                } else if (event.type == SDL_KEYDOWN) {
+                        switch(event.key.keysym.scancode) {
+                                case SDL_SCANCODE_Q:
+                                        quit = true;
+                                        break;
+                                case SDL_SCANCODE_0:
+                                        centre = {0, 0};
+                                        dx = 4;
+                                        break;
+                                case SDL_SCANCODE_MINUS:
+                                        dx /= zoom;
+                                        break;
+                                case SDL_SCANCODE_EQUALS:
+                                        dx *= zoom;
+                                        break;
+                                case SDL_SCANCODE_LEFT:
+                                        centre.first -= dx * move;
+                                        break;
+                                case SDL_SCANCODE_RIGHT:
+                                        centre.first += dx * move;
+                                        break;
+                                case SDL_SCANCODE_UP:
+                                        centre.second -= dx * move;
+                                        break;
+                                case SDL_SCANCODE_DOWN:
+                                        centre.second += dx * move;
+                                        break;
+                                        break;
+                                case SDL_SCANCODE_COMMA:
+                                        maxiter /= 2;
+                                        break;
+                                case SDL_SCANCODE_PERIOD:
+                                        maxiter *= 2;
+                                        break;
+                                case SDL_SCANCODE_LEFTBRACKET:
+                                        samples /= 2;
+                                        break;
+                                case SDL_SCANCODE_RIGHTBRACKET:
+                                        samples *= 2;
+                                        break;
+                        }
+                        maxiter = (maxiter == 0)? 1 : maxiter;
+                        samples = (samples == 0)? 1 : samples;
+                        printf("Maxiter %d, Samples %d\n", maxiter, samples);
+                        render(buffer, centre, dx, seed, f, maxiter, samples);
+                        SDL_UpdateTexture(texture, NULL, buffer, WIDTH * sizeof(uint32_t));
+                        SDL_RenderCopy(renderer, texture, NULL, &texture_rect);
+                        SDL_RenderPresent(renderer);
                 }
         }
 
