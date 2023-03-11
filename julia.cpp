@@ -211,6 +211,8 @@ int main(int argc, const char *argv[]) {
                 }
         }
 
+        delete[] buffer;
+
         SDL_DestroyTexture(texture);
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);
